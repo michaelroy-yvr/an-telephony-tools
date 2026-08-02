@@ -1,0 +1,22 @@
+{
+  "name": "an-telephony-tools",
+  "private": true,
+  "version": "0.0.1",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "packages/integrations/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev -w @an-telephony-tools/api",
+    "dev:web": "npm run dev -w @an-telephony-tools/web",
+    "db:generate": "npm run db:generate -w @an-telephony-tools/core",
+    "db:migrate": "npm run db:migrate -w @an-telephony-tools/core",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "devDependencies": {
+    "drizzle-orm": "^0.44.0",
+    "typescript": "^5.6.3"
+  }
+}
