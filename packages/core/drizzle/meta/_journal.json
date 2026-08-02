@@ -8,6 +8,13 @@
       "when": 1785710002901,
       "tag": "0000_youthful_dust",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785710782380,
+      "tag": "0001_tough_yellow_claw",
+      "breakpoints": true
     }
   ]
 }

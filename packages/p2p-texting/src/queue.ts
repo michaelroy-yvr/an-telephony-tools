@@ -6,8 +6,13 @@ export interface ClaimedAssignment {
   contactId: string;
 }
 
+const STALE_CLAIM_MINUTES = 15;
+
 // FOR UPDATE SKIP LOCKED is what guarantees two agents never get handed the same
-// contact even when they claim concurrently.
+// contact even when they claim concurrently. Assignments "assigned" longer than
+// STALE_CLAIM_MINUTES ago (agent closed the tab, crashed, etc. without sending or
+// skipping) are eligible again so they don't get stranded forever — pending
+// contacts are still preferred via the ORDER BY.
 export async function claimNextContact(
   campaignId: string,
   agentId: string
@@ -15,8 +20,12 @@ export async function claimNextContact(
   return db.transaction(async (tx) => {
     const rows = await tx.execute<{ id: string; contact_id: string }>(sql`
       SELECT id, contact_id FROM queue_assignments
-      WHERE campaign_id = ${campaignId} AND status = 'pending'
-      ORDER BY id
+      WHERE campaign_id = ${campaignId}
+        AND (
+          status = 'pending'
+          OR (status = 'assigned' AND assigned_at < now() - interval '${sql.raw(String(STALE_CLAIM_MINUTES))} minutes')
+        )
+      ORDER BY (status = 'pending') DESC, id
       FOR UPDATE SKIP LOCKED
       LIMIT 1
     `);

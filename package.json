@@ -12,6 +12,7 @@
     "dev:web": "npm run dev -w @an-telephony-tools/web",
     "db:generate": "npm run db:generate -w @an-telephony-tools/core",
     "db:migrate": "npm run db:migrate -w @an-telephony-tools/core",
+    "db:seed": "npm run db:seed -w @an-telephony-tools/core",
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },
