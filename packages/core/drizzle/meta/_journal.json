@@ -15,6 +15,13 @@
       "when": 1785710782380,
       "tag": "0001_tough_yellow_claw",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1785720553125,
+      "tag": "0002_dusty_lucky_pierre",
+      "breakpoints": true
     }
   ]
 }

@@ -23,6 +23,7 @@ export const assignmentStatus = pgEnum("assignment_status", [
   "replied",
 ]);
 export const messageDirection = pgEnum("message_direction", ["outbound", "inbound"]);
+export const smsMode = pgEnum("sms_mode", ["mock", "live"]);
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -153,12 +154,10 @@ export const queueAssignments = pgTable(
 
 export const messages = pgTable("messages", {
   id: uuid("id").primaryKey().defaultRandom(),
-  campaignId: uuid("campaign_id")
-    .notNull()
-    .references(() => campaigns.id, { onDelete: "cascade" }),
-  contactId: uuid("contact_id")
-    .notNull()
-    .references(() => contacts.id),
+  // Nullable: inbound messages (replies, STOP/START) aren't necessarily tied to a
+  // campaign send, and may arrive from numbers we don't have a contact record for.
+  campaignId: uuid("campaign_id").references(() => campaigns.id, { onDelete: "cascade" }),
+  contactId: uuid("contact_id").references(() => contacts.id),
   agentId: uuid("agent_id").references(() => users.id),
   direction: messageDirection("direction").notNull(),
   body: text("body").notNull(),
@@ -166,4 +165,15 @@ export const messages = pgTable("messages", {
   providerMessageId: varchar("provider_message_id", { length: 255 }),
   status: varchar("status", { length: 50 }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Single-row settings table (id is always "singleton"). Holds the live/mock SMS
+// switch — defaults to mock so a fresh deploy can never send a real text until an
+// admin deliberately flips it, and it's checked on every send rather than cached
+// at boot so the switch takes effect immediately across all agents.
+export const appSettings = pgTable("app_settings", {
+  id: text("id").primaryKey().default("singleton"),
+  smsMode: smsMode("sms_mode").notNull().default("mock"),
+  actionNetworkLastSyncedAt: timestamp("action_network_last_synced_at", { withTimezone: true }),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

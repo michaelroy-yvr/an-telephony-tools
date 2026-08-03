@@ -120,7 +120,8 @@ export default function CampaignsPage() {
           />
         </label>
         <label>
-          Default message template
+          Default message template (<code>{"{firstName}"}</code>, <code>{"{lastName}"}</code>,{" "}
+          <code>{"{phone}"}</code> are substituted per-contact)
           <textarea
             value={templateBody}
             onChange={(e) => setTemplateBody(e.target.value)}

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import "./globals.css";
+import { SmsModeBadge } from "../components/SmsModeBadge";
 
 export const metadata = {
   title: "an-telephony-tools",
@@ -9,7 +10,10 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <SmsModeBadge />
+        {children}
+      </body>
     </html>
   );
 }

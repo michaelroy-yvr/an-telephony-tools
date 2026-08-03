@@ -2,10 +2,10 @@ import type { FastifyPluginAsync } from "fastify";
 import { and, eq } from "drizzle-orm";
 import { db, contacts, messages, optOuts, queueAssignments } from "@an-telephony-tools/core";
 import { claimNextContact } from "@an-telephony-tools/p2p-texting";
-import type { TelephonyProvider } from "@an-telephony-tools/telephony";
 import { requireAuth } from "../plugins/auth";
+import { resolveTelephonyProvider } from "../telephony";
 
-export function buildQueueRoutes(telephony: TelephonyProvider, fromNumber: string): FastifyPluginAsync {
+export function buildQueueRoutes(fromNumber: string): FastifyPluginAsync {
   return async (app) => {
     app.addHook("preHandler", requireAuth);
 
@@ -49,6 +49,7 @@ export function buildQueueRoutes(telephony: TelephonyProvider, fromNumber: strin
         return reply.code(409).send({ error: "Contact has opted out" });
       }
 
+      const telephony = await resolveTelephonyProvider();
       const result = await telephony.sendSms({ to: contact.phone, from: fromNumber, body, mediaUrls });
 
       await db.insert(messages).values({

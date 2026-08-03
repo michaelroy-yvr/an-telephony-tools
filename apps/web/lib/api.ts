@@ -60,3 +60,10 @@ export interface MessageTemplate {
 export interface CampaignDetail extends Campaign {
   templates: MessageTemplate[];
 }
+
+export type SmsMode = "mock" | "live";
+
+export interface ActionNetworkStatus {
+  configured: boolean;
+  lastSyncedAt: string | null;
+}

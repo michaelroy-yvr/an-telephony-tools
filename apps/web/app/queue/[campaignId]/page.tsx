@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { apiFetch, ApiError, type CampaignDetail, type Contact } from "../../../lib/api";
+import { renderTemplate } from "../../../lib/template";
 
 interface ClaimResult {
   assignmentId: string;
@@ -31,7 +32,8 @@ export default function QueuePage() {
         setCurrent("empty");
       } else {
         setCurrent(claimed);
-        setBody(campaign?.templates[0]?.body ?? "");
+        const template = campaign?.templates[0]?.body ?? "";
+        setBody(template ? renderTemplate(template, claimed.contact) : "");
       }
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Failed to claim next contact");
@@ -110,7 +112,12 @@ export default function QueuePage() {
             <label>
               Template
               <select
-                onChange={(e) => setBody(campaign.templates.find((t) => t.id === e.target.value)?.body ?? "")}
+                onChange={(e) => {
+                  const template = campaign.templates.find((t) => t.id === e.target.value);
+                  if (template) {
+                    setBody(renderTemplate(template.body, current.contact));
+                  }
+                }}
                 defaultValue=""
                 style={{ display: "block", width: "100%", padding: "0.5rem" }}
               >

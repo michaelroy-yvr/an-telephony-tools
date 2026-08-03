@@ -7,6 +7,10 @@
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@an-telephony-tools/core": "*",
+    "drizzle-orm": "^0.44.0"
+  },
   "devDependencies": {
     "typescript": "^5.6.3"
   }
